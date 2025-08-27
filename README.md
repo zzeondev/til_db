@@ -26,3 +26,8 @@
 
 - PK 속성
 - 일반속성
+
+### 3. 테이블 구조를 만들고 가능하면 ERD 그려서 챗 GPT 로 작성 후 살펴보자
+
+- https://www.erdcloud.com/
+- https://app.diagrams.net/
