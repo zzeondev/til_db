@@ -219,13 +219,285 @@ insert into authors (id, name, email) values (1, "홍길동", "hong@a.com");
 select * from authors;
 ```
 
-### 6.8. authors 테이블의 id 가 1 인 데이터를 posts 테이블에 추가
+### 6.8. `authors 테이블의 id 가 1 인 데이터`를 posts 테이블에 추가
 
 - FK 가 있는 경우
 
 ```sql
 -- FK 가 있는 경우
 describe posts;
-insert into posts (id, title, contents, authors_id) value (1, "제목1", "내용1",1);
+insert into posts (id, title, contents, authors_id) value (1, "제목1", "내용1", 1);
 select * from posts;
 ```
+
+- FK 가 없는 경우에는 데이터오류가 발생하며 데이터 추가 안됨
+
+```sql
+IMSERT INTO 테이블명 (칼럼명, 칼럼명, ...) VALUES (값, 값, ...);
+-- FK 에 없는 사용자 id 를 넣는다면 ?
+insert into posts (id, title, contents, authors_id) values (3, "제목3", "내용3", 3);
+select * from posts;
+```
+
+### 6.9. 데이터 수정 (Update)
+
+- `반드시 조건절이 있어야 한다.`
+- 만약, 조건절이 없으면 전체 데이터가 수정 된다.
+- `WHERE 조건` 을 누락하면 모든 데이터가 수정된다. 주의사항
+- 주의사항 : 기존 프로그래머들
+  - `==` 을 사용하지 않습니다. 즉, 같다는 표현이 아닙니다.
+  - `=` 을 사용하여 같다. 즉, 비교 한다.
+
+```sql
+UPDATE 테이블명 SET 칼럼명 = 값, 칼럼명 = 값 WHERE 조건;
+UPDATE 테이블명 SET 칼럼명 = 값, 칼럼명 = 값 WHERE 필드이름=값;
+-- WHERE 필드이름=값 은 비교값 필드이름과 값이 같은 거 찾음
+
+-- 사용자 id 1 의 email 을 변경하기
+update authors set email = "hong@gmail.com" where id = 1;
+select * from authors;
+```
+
+### 6.10. 데이터 삭제(delete)
+
+- 퇴사..당한다.
+- `WHERE 를 반드시 사용한다.`
+
+```sql
+DELETE FROM 테이블명 WHERE 조건;
+DELETE FROM 테이블명 WHERE 필드이름 = 값;
+
+-- id 2 번 유저 삭제하기
+select * from authors;
+delete from authors where id = 2;
+```
+
+### 6.11. 테이블의 모든 데이터 삭제하기
+
+- `DELETE FROM 테이블명`
+
+  - 데이터를 지우고 테이블은 남겨둔다.
+  - `복구가 가능하다.`
+  - storage 에 파일형태로 자료는 남아있음
+
+- `TRUNCATE TABLE 테이블명`
+
+  - 데이터도 지우고 테이블도 지운다.
+  - `복구가 불가능하다.`
+
+- `DROP TABLE 테이블명`
+  - 데이터 삭제, 테이블 구조 삭제, 복구 불가
+
+### 6.12. 데이터 조회 (Select)
+
+- 개발자가 가장 많이 사용함
+- 특정한 데이터에서 원하는 결과를 도출해 내는 작업
+- 알고리즘 시험에 늘 나옴
+
+- 모든 데이터 조회하기
+
+```sql
+SELECT * FROM 테이블명;
+select * from authors;
+```
+
+### 6.13. WHERE 절을 이용한 원하는 데이터 출력하기
+
+- PK 를 이용해서 데이터 추출하기 (유일한 값)
+
+```sql
+select *
+from authors
+where id = 1;
+```
+
+- 문자열 비교는 반드시 `작은 따옴표`를 사용한다.
+
+```sql
+select *
+from authors
+where name = '또치';
+```
+
+- 숫자는 비교시 =, >, <, >=, <= 가능하다.
+
+```sql
+select *
+from authors
+where id >= 1;
+```
+
+- where 조건이 2개 이상이면 AND 를 사용하자
+
+```sql
+select *
+from authors
+where id > 1 and email = 'd@d.com';
+
+select *
+from authors
+where id > 1 and password = '1234';
+```
+
+- 특정 항목만 조회하기
+
+```sql
+select name
+from authors;
+
+select name
+from authors
+where name = '아이유';
+```
+
+- 정렬로 조회하기 (pk를 기준으로)
+
+```sql
+-- 오름차순 정렬
+select *
+from authors
+order by name;
+
+-- 오름차순 정렬
+select *
+from authors
+order by id asc;
+
+-- 내림차순 정렬
+select *
+from authors
+order by id desc;
+
+-- 오름차순 정렬
+select *
+from authors
+order by name;
+
+-- 오름차순 정렬
+select *
+from authors
+order by name asc;
+
+-- 내림차순 정렬
+select *
+from authors
+order by name desc;
+```
+
+- 여러 칼럼을 정렬함 (앞쪽 처리후, 나머지 순으로 처리 됨)
+
+```sql
+select *
+from authors
+order by name desc, email desc;
+```
+
+- 조회수 개수 제한하기
+
+```sql
+select *
+from authors
+limit 2;
+
+-- 조합도 가능
+select *
+from authors
+where password = '1234'
+order by id desc
+limit 2;
+```
+
+- null 을 조회 조건으로 활용
+
+```sql
+select *
+from authors
+where password is null;
+
+select *
+from authors
+where password is not null;
+```
+
+- https://school.programmers.co.kr/learn/challenges?order=recent&page=1&languages=mysql
+
+## 7. 데이터 종류
+
+### 7.1. tinyint
+
+- `-128 ~ 127` 숫자
+
+### 7.2. int
+
+- `-20억 ~ 20억`
+
+### 7.3. bigint
+
+- `글로벌 서비스`
+
+### 7.4. unsigned
+
+- 양수, 음수를 제외하고 2배로
+- `int unsigned` : 40억
+- `tinyint unsigned` : 0 ~ 255
+
+### 7.5. 실수
+
+- `decimal(m, d)`
+- `float`
+- `double`
+
+### 7.6. 문자 char(길이)
+
+- 길이에는 최대 길이를 작성함
+- 길이 만큼 공간차지
+- 성별, 주민번호, 전화번호
+- 길이가 정해진 데이터를 정의할 때
+
+### 7.7. 문자 varchar(길이)
+
+- 웬만하면 이거 사용하자
+- 길이는 문자열의 최대 길이를 말함
+- 가변 길이로서 딱 글자만큼만 저장함
+- 이름, 상품명, 주소 등
+- 빠름
+
+### 7.8. 문자 text
+
+- 길이 지정 못함
+- 가변적으로 길이 정해짐
+- 최대 65536 글자 가능
+- 느림
+
+### 7.9. blob
+
+- 바이너리 데이터
+- png 등의 이미지를 굳이 보관할 때
+- 안쓴다.
+
+### 7.10. enum
+
+- 미리 들어갈 수 있는 특정 데이터의 목록값을 지정
+
+```sql
+ALTER TABLE author ADD COLUMN role ENUM('admin', 'user') not null default 'user';
+```
+
+### 7.11. 날짜 date
+
+- YYYY-MM-DD
+- 날짜만 저장
+- 생년월일
+
+### 7.12. 날짜 datetime
+
+- 날짜와 시간을 저장
+- 옵션을 주면 m 지정시 소수점 microseconds 단위까지 저장
+- YYYY-MM-DD HH:MM:SS
+- 가장 많이 사용
+- 주문 시간, 글 작성 시간 등
+- `칼럼명 datetime default current_timestamp()` : 현재 시간을 기본으로
+
+### 7.13. 날짜 now() 함수
+
+- 현재 날짜와 시간을 반환
